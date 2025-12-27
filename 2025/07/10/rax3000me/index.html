@@ -1,0 +1,699 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Clazys">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="首先感谢两位大佬 Daniel-Hwang 和 QiYueYiya ，本篇教程根据他们的教程修改 原链接：https:&#x2F;&#x2F;github.com&#x2F;QiYueYiya&#x2F;OpenWrt-Actions&#x2F;tree&#x2F;main&#x2F;RAX3000Mehttps:&#x2F;&#x2F;github.com&#x2F;Daniel-Hwang&#x2F;RAX3000Me 准备工作下载刷机文件 rax3000me_immortwrt.zip 并解压。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAX3000Me刷入immortalwrt固件">
+<meta property="og:url" content="https://blog.clazys.qzz.io/2025/07/10/rax3000me/index.html">
+<meta property="og:site_name" content="Clazys&#39; Blog">
+<meta property="og:description" content="首先感谢两位大佬 Daniel-Hwang 和 QiYueYiya ，本篇教程根据他们的教程修改 原链接：https:&#x2F;&#x2F;github.com&#x2F;QiYueYiya&#x2F;OpenWrt-Actions&#x2F;tree&#x2F;main&#x2F;RAX3000Mehttps:&#x2F;&#x2F;github.com&#x2F;Daniel-Hwang&#x2F;RAX3000Me 准备工作下载刷机文件 rax3000me_immortwrt.zip 并解压。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.clazys.qzz.io/img/rax30_1.png">
+<meta property="og:image" content="https://blog.clazys.qzz.io/img/rax30_2.png">
+<meta property="og:image" content="https://blog.clazys.qzz.io/img/rax_sues.png">
+<meta property="og:image" content="https://img.shields.io/badge/License-GPLv3-blue.svg">
+<meta property="article:published_time" content="2025-07-10T06:04:14.000Z">
+<meta property="article:modified_time" content="2025-12-06T04:09:38.067Z">
+<meta property="article:author" content="Clazys">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.clazys.qzz.io/img/rax30_1.png">
+  
+  
+  
+  <title>RAX3000Me刷入immortalwrt固件 - Clazys&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.clazys.qzz.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Clazys' Blog" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Clazys&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="RAX3000Me刷入immortalwrt固件"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-07-10 14:04" pubdate>
+          2025年7月10日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          894 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">RAX3000Me刷入immortalwrt固件</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="首先感谢两位大佬-Daniel-Hwang-和-QiYueYiya-，本篇教程根据他们的教程修改"><a href="#首先感谢两位大佬-Daniel-Hwang-和-QiYueYiya-，本篇教程根据他们的教程修改" class="headerlink" title="首先感谢两位大佬 Daniel-Hwang 和 QiYueYiya ，本篇教程根据他们的教程修改"></a>首先感谢两位大佬 <a target="_blank" rel="noopener" href="https://github.com/Daniel-Hwang/">Daniel-Hwang</a> 和 <a target="_blank" rel="noopener" href="https://github.com/QiYueYiya/">QiYueYiya</a> ，本篇教程根据他们的教程修改</h3><hr>
+<p>原链接：<br><a target="_blank" rel="noopener" href="https://github.com/QiYueYiya/OpenWrt-Actions/tree/main/RAX3000Me">https://github.com/QiYueYiya/OpenWrt-Actions/tree/main/RAX3000Me</a><br><a target="_blank" rel="noopener" href="https://github.com/Daniel-Hwang/RAX3000Me">https://github.com/Daniel-Hwang/RAX3000Me</a></p>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p><a target="_blank" rel="noopener" href="https://github.com/Zhengyscla/iwrt_rax3000me/releases/download/rax3000me/rax3000me_immortwrt.zip">下载</a>刷机文件 <code>rax3000me_immortwrt.zip</code> 并解压。</p>
+<blockquote>
+<p>我上传到Github上的文件名称有误</p>
+</blockquote>
+<h2 id="开始操作"><a href="#开始操作" class="headerlink" title="开始操作"></a>开始操作</h2><h2 id="1-打开Telnet"><a href="#1-打开Telnet" class="headerlink" title="1. 打开Telnet"></a>1. 打开Telnet</h2><blockquote>
+<p>你需要准备Linux环境，Ubuntu也好，Arch也行，WSL也方便，或者使用安卓手机Termux也可以，安装好 openssl 工具，termux需要安装 openssl-tool</p>
+</blockquote>
+<p>查看路由器底下的SN码，并记下来。或者登录路由器 192.168.10.1 使用默认账户登录，复制SN码</p>
+<h2 id="2-使用Linux终端计算生成密码"><a href="#2-使用Linux终端计算生成密码" class="headerlink" title="2. 使用Linux终端计算生成密码"></a>2. 使用Linux终端计算生成密码</h2><p>下载开启Telnet配置文件 RAX3000M_XR30_cfg-telnet-20240117.conf，已放在压缩包里</p>
+<p>或：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wget https://github.com/Zhengyscla/iwrt_rax3000me/releases/download/rax3000me/RAX3000M_XR30_cfg-telnet-20240117.conf<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>你可能发现文件名似乎是给RAX3000M使用的而不是RAX3000Me。要注意RAX3000Me的固件是和RAX3000M是一样的</p>
+</blockquote>
+<p>计算生成密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">mypassword=$(openssl passwd -1 -salt aV6dW8bD <span class="hljs-string">&quot;<span class="hljs-variable">$SN</span>&quot;</span>)<br>mypassword=$(<span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;echo <span class="hljs-variable">$mypassword</span>&quot;</span>)<br><span class="hljs-built_in">echo</span> <span class="hljs-variable">$mypassword</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意了，尽管 echo $mypassword 只是输出已经生成的密码，但这是成败的关键！一般情况下，它会输出明文密码。但某些特殊SN码和我一样输出了空密码，此时不能使用生成的空密码来加密文件了</p>
+</blockquote>
+<p><img src="/img/rax30_1.png" srcset="/img/loading.gif" lazyload alt="作者的空密码输出，运气“大大的好”"></p>
+<p>如果你的密码输出正常，则加密配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl aes-256-cbc -pbkdf2 -k <span class="hljs-string">&quot;<span class="hljs-variable">$mypassword</span>&quot;</span> -<span class="hljs-keyword">in</span> RAX3000M_XR30_cfg-telnet-20240117.conf -out cfg_import_config_file_new.conf<br></code></pre></td></tr></table></figure>
+
+<p>上传配置至路由器，使用默认密码登录即可，路由器会自动重启</p>
+<p><img src="/img/rax30_2.png" srcset="/img/loading.gif" lazyload alt="上传配置文件界面在这里，正常会出现一段横向进度条，顶部为空密码上传后失败提示"></p>
+<p><strong>空密码执行这个指令进行加密，<del>律师函风险 :) .</del></strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl aes-256-cbc -pbkdf2 -k <span class="hljs-string">&#x27;#RaX30O0M@!$&#x27;</span> -<span class="hljs-keyword">in</span> RAX3000M_XR30_cfg-telnet-20240117.conf -out cfg_import_config_file_new.conf<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-刷写固件"><a href="#3-刷写固件" class="headerlink" title="3. 刷写固件"></a>3. 刷写固件</h2><p>路由器重启后，使用Telnet工具连接路由器</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">telnet</span> <span class="hljs-number">192.168.10.1</span>  <span class="hljs-comment">#根据自身网络情况而定</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li><details>
+  <summary>不会开Windows的Telnet？</summary>
+
+<ol>
+<li><p>开始菜单 –&gt; 搜索 <code>启用或关闭Windows功能</code> –&gt; 勾选 <code>Telnet Client</code> 或 <code>Telnet 客户端</code>  –&gt; 确定无需重启</p>
+</li>
+<li><p>打开 <code>新</code> 的终端即可使用</p>
+</li>
+</ol>
+  </details></li>
+</ul>
+<h4 id="下载preloader和Uboot到路由器-tmp目录下，采用来自-QiYueYiya-的文件"><a href="#下载preloader和Uboot到路由器-tmp目录下，采用来自-QiYueYiya-的文件" class="headerlink" title="下载preloader和Uboot到路由器&#x2F;tmp目录下，采用来自 QiYueYiya 的文件"></a>下载preloader和Uboot到路由器&#x2F;tmp目录下，采用来自 QiYueYiya 的文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">wget -P /tmp https://github.com/QiYueYiya/OpenWrt-Actions/releases/download/RAX3000Me_Files/mt7981-cmcc_rax3000me-nand-ddr3-preloader.bin<br><br>wget -P /tmp https://github.com/QiYueYiya/OpenWrt-Actions/releases/download/RAX3000Me_Files/mt7981-cmcc_rax3000me-nand-ddr3-fip-fit.bin<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>无USB版本的要把 ddr3 换成 ddr4 </p>
+</blockquote>
+<ul>
+<li><details>
+  <summary>失败了吗？</summary>
+
+<p>   使用 <code>Windows 8兼容模式</code> 打开压缩包内的 <code>HTTP File Server</code> ，不知道为什么，反正挺玄学的</p>
+<p>  保证路由器和电脑在 <strong>同一网段</strong> ，链接路由器的wifi或网线连接</p>
+<p>  把 <code>mt7981-cmcc_rax3000me-nand-ddr3-fip-fit.bin</code> 和 <code>mt7981-cmcc_rax3000me-nand-ddr3-preloader.bin</code> 直接拖入软件窗口即可</p>
+<p>  执行指令，把 <code>your_ip</code> 换成你的内网ip</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">wget -P /tmp http://your_ip/mt7981-cmcc_rax3000me-nand-ddr3-fip-fit.bin<br>wget -P /tmp http://your_ip/mt7981-cmcc_rax3000me-nand-ddr3-preloader.bin<br></code></pre></td></tr></table></figure>
+
+  </details></li>
+</ul>
+<p>烧写Uboot固件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">mtd write /tmp/mt7981-cmcc_rax3000me-nand-ddr3-preloader.bin BL2<br><span class="hljs-comment"># 可以再次输入验证刷入情况，但实际上我这无USB版本的失败了，但仍然成功刷机</span><br>mtd write /tmp/mt7981-cmcc_rax3000me-nand-ddr3-fip-fit.bin FIP <span class="hljs-comment"># 必须刷</span><br>reboot <span class="hljs-comment"># 重启查看奇迹</span><br></code></pre></td></tr></table></figure>
+
+<p>重启后输入 <code>192.168.1.1</code> 进入Uboot，指示灯可能不亮。如果没有进入，用取卡针顶住RESET 5秒多，变绿灯了用网线连接路由器和计算机</p>
+<p>进入Uboot后选择选择压缩包内的 <code>RAX3000Me-initramfs-recovery.itb</code> 文件刷写等待重启</p>
+<p>路由器重启完毕，电脑获取IP后，浏览器输入<code>192.168.1.1</code>即可进入<code>i</code>mmortalwrt&#96;。</p>
+<p>但是还没有结束，你会发现提示这是临时界面</p>
+<h2 id="4-完整刷入immortalwrt"><a href="#4-完整刷入immortalwrt" class="headerlink" title="4. 完整刷入immortalwrt"></a>4. 完整刷入immortalwrt</h2><p>在系统–&gt;备份与升级–&gt;刷写固件里刷写 <a target="_blank" rel="noopener" href="https://github.com/QiYueYiya/OpenWrt-Actions/releases/tag/RAX3000Me">RAX3000Me-yyMMdd-squashfs-sysupgrade.itb (点此下载，实时更新)</a> 固件</p>
+<p>更新后，路由器的后台地址变为 <code>192.168.5.1</code></p>
+<p><img src="/img/rax_sues.png" srcset="/img/loading.gif" lazyload alt="Immortalwrt RAX3000Me 管理界面"></p>
+<hr>
+<p><a target="_blank" rel="noopener" href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" srcset="/img/loading.gif" lazyload alt="GPLv3 License"></a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>RAX3000Me刷入immortalwrt固件</div>
+      <div>https://blog.clazys.qzz.io/2025/07/10/rax3000me/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Clazys</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年7月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/07/27/ohzshin/" title="OhMyZsh安装及推荐主题">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">OhMyZsh安装及推荐主题</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/05/02/arcgrollama/" title="Intel Arc显卡安装Ollama">
+                        <span class="hidden-mobile">Intel Arc显卡安装Ollama</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

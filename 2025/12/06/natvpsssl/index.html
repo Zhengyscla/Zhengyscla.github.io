@@ -1,0 +1,740 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Clazys">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="NAT VPS如何使用HTTPS加密网站？分析Let&#39;s Encrypt证书在NAT环境下的配置方法，主要介绍DNS-01验证方式，以及使用Cloudflare Tunnel进行CDN加速以及HTTPS加密">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NAT VPS使用 HTTPS 加密网站">
+<meta property="og:url" content="https://blog.clazys.qzz.io/2025/12/06/natvpsssl/index.html">
+<meta property="og:site_name" content="Clazys&#39; Blog">
+<meta property="og:description" content="NAT VPS如何使用HTTPS加密网站？分析Let&#39;s Encrypt证书在NAT环境下的配置方法，主要介绍DNS-01验证方式，以及使用Cloudflare Tunnel进行CDN加速以及HTTPS加密">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shields.io/badge/License-GPLv3-blue.svg">
+<meta property="article:published_time" content="2025-12-06T07:46:37.000Z">
+<meta property="article:modified_time" content="2025-12-27T02:07:46.402Z">
+<meta property="article:author" content="Clazys">
+<meta property="article:tag" content="vps">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://img.shields.io/badge/License-GPLv3-blue.svg">
+  
+  
+  
+  <title>NAT VPS使用 HTTPS 加密网站 - Clazys&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"blog.clazys.qzz.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Clazys' Blog" type="application/atom+xml">
+</head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Clazys&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="NAT VPS使用 HTTPS 加密网站"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-12-06 15:46" pubdate>
+          2025年12月6日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          976 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">NAT VPS使用 HTTPS 加密网站</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="NAT-VPS-使用HTTPS加密"><a href="#NAT-VPS-使用HTTPS加密" class="headerlink" title="NAT VPS 使用HTTPS加密"></a>NAT VPS 使用HTTPS加密</h1><h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>Let’s Encrypt 等免费 SSL 证书签发机构在验证域名所有权时，通常有三种验证方式：</p>
+<ol>
+<li><p>HTTP-01：通过 80&#x2F;443 端口访问你的服务器，可以直接使用官方提供的程序一步到位；</p>
+</li>
+<li><p>TLS-ALPN-01：要求可访问 443 端口；</p>
+</li>
+<li><p>DNS-01：通过修改域名的 DNS 记录来验证。</p>
+</li>
+</ol>
+<p>然而我们的场景是：</p>
+<ol>
+<li><p>服务器是 NAT 机器；</p>
+</li>
+<li><p>无法直通或已占用 443&#x2F;80 端口；</p>
+</li>
+<li><p>有 Cloudflare 域名；</p>
+</li>
+<li><p>可通过端口映射（如 4432 → 443 或 3468 → 3468）访问。</p>
+</li>
+</ol>
+<p>→ 那么只能走 DNS 验证方式（DNS-01）。</p>
+<h2 id="使用-Cloudflare-API-自动签发证书"><a href="#使用-Cloudflare-API-自动签发证书" class="headerlink" title="使用 Cloudflare API 自动签发证书"></a>使用 Cloudflare API 自动签发证书</h2><p><strong>1. 在 Cloudflare 控制台创建 API Token</strong></p>
+<p>登录 Cloudflare</p>
+<p>进入 <code>My Profile → API Tokens</code></p>
+<p>点击 <code>Create Token</code></p>
+<p>选择模板 <code>Edit zone DNS</code></p>
+<p>权限：</p>
+<p>Zone → DNS → Edit</p>
+<p>Zone → Zone → Read</p>
+<p>选择你要绑定好的域名</p>
+<p>生成后保存 <code>API Token</code></p>
+<p><strong>2. 在服务器安装 acme.sh</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl https://get.acme.sh | sh<br><span class="hljs-built_in">source</span> ~/.bashrc<br></code></pre></td></tr></table></figure>
+
+<p>设置好环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> CF_Token=<span class="hljs-string">&quot;你刚才保存的_API_Token&quot;</span><br><span class="hljs-built_in">export</span> CF_Account_ID=<span class="hljs-string">&quot;&quot;</span><br><span class="hljs-built_in">export</span> CF_Zone_ID=<span class="hljs-string">&quot;&quot;</span><br><span class="hljs-built_in">export</span> CF_Email=<span class="hljs-string">&quot;&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>替换 <code>CF_Token</code> 即可，其他可以留空不填</p>
+<p><strong>3. 注册账户（ZeroSSL 要求）以及获取证书</strong></p>
+<p>执行一次</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">~/.acme.sh/acme.sh --register-account -m youremail@example.com<br></code></pre></td></tr></table></figure>
+
+<p>如果你不想输入电子邮件或者不使用ZeroSSl，可以执行下面的命令换成Let’s Encrypt</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">~/.acme.sh/acme.sh --set-default-ca --server letsencrypt<br></code></pre></td></tr></table></figure>
+
+<p>执行申请命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">~/.acme.sh/acme.sh --issue --dns dns_cf -d example.com -d 2.example.com <span class="hljs-comment"># 申请两种域名证书</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>你可以单次申请多个证书，假设你购买了 <code>example.com</code> 这个域名，可以执行 <code>-d example.com</code> 获取根域名证书，也可以执行 <code>-d 2.example.com</code> 获取子域名证书。</p>
+</blockquote>
+<p>如果一切正确，会出现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">[Tue Oct 06 11:10:02 CST 2025] Adding TXT record: _acme-challenge.example.com<br>[Tue Oct 06 11:10:03 CST 2025] Successfully added<br>...<br><span class="hljs-comment"># 一段时间后会显示：</span><br>[Tue Oct 06 11:12:03 CST 2025] Verify finished, cert is issued.<br></code></pre></td></tr></table></figure>
+
+<p><strong>4. 安装证书到指定目录</strong></p>
+<p>假设你想放到 <code>/root/cert</code> 目录里</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> -p /root/cert<br>~/.acme.sh/acme.sh --install-cert -d example.com \<br>  --key-file /root/cert/private.key \<br>  --fullchain-file /root/cert/cert.crt<br></code></pre></td></tr></table></figure>
+
+<p>此时你可以在一些网站面板添加证书路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">/root/cert/private.key  <span class="hljs-comment"># 私钥地址</span><br>/root/cert/cert.crt     <span class="hljs-comment"># 证书地址</span><br></code></pre></td></tr></table></figure>
+
+<p>在 Cloudflare 控制台 → DNS → 添加 A 记录：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs txt">| 类型 | 名称     | 值（IPv4 地址）  | 代理状态            |<br>| --   | -----  -| ----------------| -------------      |<br>| A    | `@`     | `nat ip地址`     | **灰色云（仅DNS）** |<br></code></pre></td></tr></table></figure>
+
+<p>如果是子域名，假设 <code>2.example.com</code> ，把 <code>@</code> 改成 <code>2</code> 即可</p>
+<p><strong>移除证书：</strong></p>
+<p>执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">~/.acme.sh/acme.sh --remove -d clazys.qzz.io<br></code></pre></td></tr></table></figure>
+
+<p>之后在Cloudflare里删除dns记录</p>
+<h2 id="无法手动设置证书网站面板使用HTTPS加密"><a href="#无法手动设置证书网站面板使用HTTPS加密" class="headerlink" title="无法手动设置证书网站面板使用HTTPS加密"></a>无法手动设置证书网站面板使用HTTPS加密</h2><p>这里以Komari监控面板举例，我们需要使用 Cloudflare Tunnel ，适合Cloudflare 允许的标准 HTTPS 端口（443, 2053, 2083, 2087, 2096, 8443）全被禁止或占用</p>
+<p><strong>1. 安装Cloudflared</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared<br><span class="hljs-built_in">chmod</span> +x /usr/local/bin/cloudflared<br></code></pre></td></tr></table></figure>
+
+<p><strong>2. 登录Cloudflare并创建隧道</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">cloudflared tunnel login<br>cloudflared tunnel create komari<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在此之前，建议使用浏览器先提前登录好Cloudflare</p>
+</blockquote>
+<p>这会生成一个类似 <code>/root/.cloudflared/komari.json</code> 的凭证文件 （可能是uuid替代了 <code>komari</code> 字样 ，类似于 <code>/root/.cloudflared/cdd1aaaa-aaaa-bbbb-cccc-cf1ddddd450.json</code></p>
+<p><strong>3. 配置转发规则</strong></p>
+<p>编辑 &#x2F;root&#x2F;.cloudflared&#x2F;config.yml：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">tunnel: komari<br>credentials-file: /root/.cloudflared/komari.json<br><span class="hljs-comment"># credentials-file: /root/.cloudflared/cdd1aaaa-aaaa-bbbb-cccc-cf1ddddd450.json  # 如果你是uuid为名字的配置文件</span><br><br>ingress:<br>  - hostname: probe.yourdomain.com<br>    service: http://localhost:3000  <span class="hljs-comment"># 你的Komari控制面板或其他面板监听的端口替代3000</span><br>  - service: http_status:404<br></code></pre></td></tr></table></figure>
+
+<p><strong>4. 建立Cloudflare DNS路由</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">cloudflared tunnel route dns komari komari.yourdomain.com<br></code></pre></td></tr></table></figure>
+
+<p>其中 <code>yourdomain.com</code> 是你购买的根域名，<code>komari.</code> 是新申请的子域名， 域名前面的 <code>komari</code> 是DNS配置名字</p>
+<p>这会在 Cloudflare 自动添加一条 CNAME 记录指向隧道</p>
+<p><strong>5. 启动隧道</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">cloudflared tunnel run komari<br></code></pre></td></tr></table></figure>
+
+<p>将cloudflared加入systemd：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">cloudflared service install<br></code></pre></td></tr></table></figure>
+
+<p>如果你的NAT VPS不支持这条命令，手写配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nano /etc/systemd/system/cloudflared.service<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs yaml">[<span class="hljs-string">Unit</span>]<br><span class="hljs-string">Description=Cloudflare</span> <span class="hljs-string">Tunnel</span> <span class="hljs-string">for</span> <span class="hljs-string">komari</span><br><span class="hljs-string">After=network.target</span><br><br>[<span class="hljs-string">Service</span>]<br><span class="hljs-string">Type=simple</span><br><span class="hljs-string">User=root</span><br><span class="hljs-comment"># 指定 cloudflared 可执行文件路径</span><br><span class="hljs-string">ExecStart=/usr/local/bin/cloudflared</span> <span class="hljs-string">tunnel</span> <span class="hljs-string">run</span> <span class="hljs-string">--config</span> <span class="hljs-string">/root/.cloudflared/config.yaml</span><br><span class="hljs-string">Restart=on-failure</span><br><span class="hljs-string">RestartSec=5s</span><br><span class="hljs-comment"># 日志输出到 systemd journal</span><br><span class="hljs-string">StandardOutput=journal</span><br><span class="hljs-string">StandardError=journal</span><br><br>[<span class="hljs-string">Install</span>]<br><span class="hljs-string">WantedBy=multi-user.target</span><br></code></pre></td></tr></table></figure>
+
+<p>现在访问</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs txt">https://komari.yourdomain.com<br></code></pre></td></tr></table></figure>
+
+<p>你将看到你的网站，并且带上HTTPS证书，</p>
+<p><strong>删除隧道</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">cloudflared tunnel delete komari<br></code></pre></td></tr></table></figure>
+
+<p>之后手动在DNS记录中删除相对应的CNAME记录，名字应该是 <code>komari</code></p>
+<hr>
+<p><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" srcset="/img/loading.gif" lazyload alt="GPLv3 License"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/vps/" class="print-no-link">#vps</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>NAT VPS使用 HTTPS 加密网站</div>
+      <div>https://blog.clazys.qzz.io/2025/12/06/natvpsssl/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Clazys</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年12月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/12/27/getssl/" title="手动获取独立VPS的SSL证书">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">手动获取独立VPS的SSL证书</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/09/06/hyst2in/" title="搭建Hysteria 2代理服务">
+                        <span class="hidden-mobile">搭建Hysteria 2代理服务</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
