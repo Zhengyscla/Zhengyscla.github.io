@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.clazys.qzz.io/2026/02/11/fail2ban/</loc>
+    
+    <lastmod>2026-02-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.clazys.qzz.io/2025/12/27/getssl/</loc>
     
     <lastmod>2025-12-27</lastmod>
@@ -94,7 +103,7 @@
 
   <url>
     <loc>https://blog.clazys.qzz.io/</loc>
-    <lastmod>2025-12-27</lastmod>
+    <lastmod>2026-02-13</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -102,42 +111,42 @@
   
   <url>
     <loc>https://blog.clazys.qzz.io/tags/ollama/</loc>
-    <lastmod>2025-12-27</lastmod>
+    <lastmod>2026-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.clazys.qzz.io/tags/gms/</loc>
-    <lastmod>2025-12-27</lastmod>
+    <lastmod>2026-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.clazys.qzz.io/tags/proxy/</loc>
-    <lastmod>2025-12-27</lastmod>
+    <lastmod>2026-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.clazys.qzz.io/tags/vps/</loc>
-    <lastmod>2025-12-27</lastmod>
+    <lastmod>2026-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.clazys.qzz.io/tags/termux/</loc>
-    <lastmod>2025-12-27</lastmod>
+    <lastmod>2026-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://blog.clazys.qzz.io/tags/fcitx/</loc>
-    <lastmod>2025-12-27</lastmod>
+    <lastmod>2026-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>

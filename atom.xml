@@ -6,7 +6,7 @@
   <link href="https://blog.clazys.qzz.io/atom.xml" rel="self"/>
   
   <link href="https://blog.clazys.qzz.io/"/>
-  <updated>2025-12-27T02:15:21.065Z</updated>
+  <updated>2026-02-13T05:35:41.779Z</updated>
   <id>https://blog.clazys.qzz.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 Fail2ban 保护你的 SSH （基础）</title>
+    <link href="https://blog.clazys.qzz.io/2026/02/11/fail2ban/"/>
+    <id>https://blog.clazys.qzz.io/2026/02/11/fail2ban/</id>
+    <published>2026-02-11T09:04:05.000Z</published>
+    <updated>2026-02-13T05:35:41.779Z</updated>
+    
+    <content type="html"><![CDATA[<p>大多数VPS开启SSH用于用户登陆操作系统，对于暴露在公网环境的Linux来说，公网环境 + 端口暴露 的情况下经常有大量的恶意爆破登陆</p><p>Fail2ban 是一款入侵防御软件，通过扫描常见的登陆日志文件，并向系统防火墙添加对异常ip的封禁，达到防止爆破的目的</p><blockquote><p>虽然安装这个程序可以防范大多数 ssh 扫描风险，但是 <code>非标准端口 + 密钥登陆</code> 是最安全的手段</p></blockquote><p><img src="/img/fail2ban1.png" alt="互联网上扫描我的ssh的机器"></p><h2 id="快速安装"><a href="#快速安装" class="headerlink" title="快速安装"></a>快速安装</h2><p>对于 Debian 系列的 Linux 来说，只需要执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">apt install fail2ban<br></code></pre></td></tr></table></figure><p>不过现在服务通常不会运行，目前它还没有依赖的配置文件。不过默认提供的日志文件足够满足我们的目的，只需要复用就行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cp</span> /etc/fail2ban/jail.conf /etc/fail2ban/jail.local<br>systemctl restart fail2ban<br></code></pre></td></tr></table></figure><p>一般情况下 fail2ban 就可以开始保护你的 ssh 登录</p><h3 id="小部分进阶使用"><a href="#小部分进阶使用" class="headerlink" title="小部分进阶使用"></a>小部分进阶使用</h3><p>使用文本编辑器编辑 <code>etc/fail2ban/jail.local</code></p><p>其中，我们会看到</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># ignoreip = 127.0.0.1/8 192.168.1.100/24   # 类似白名单ip 可能通常是注释或者不存在</span><br>bantime = 10m  <span class="hljs-comment"># 封禁时间，这是十分钟，可以改成 3600m 封一天</span><br>findtime = 10m<br>maxretry = 3   <span class="hljs-comment"># 与 findtime 组合，目前是 十分钟之内尝试三次错误后封禁</span><br></code></pre></td></tr></table></figure><h2 id="附加：封禁-Telegram-Bot-通知"><a href="#附加：封禁-Telegram-Bot-通知" class="headerlink" title="附加：封禁 Telegram Bot 通知"></a>附加：封禁 Telegram Bot 通知</h2><p>使用项目 <a href="https://github.com/Zhengyscla/fail2_telegram">fail2_telegram</a> ，不需要直接修改 jail.local ，独立程序，只读取 fail2ban 日志，与 fail2ban 互不影响</p><blockquote><p>更多信息自行查看项目原页</p></blockquote><h3 id="快速安装-1"><a href="#快速安装-1" class="headerlink" title="快速安装"></a>快速安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> /etc/systemd/system/<br>wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/master/fail2ban-notify.service<br><span class="hljs-built_in">cd</span> /usr/local/bin/<br>wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/master/fail2ban-telegram-notify.sh<br></code></pre></td></tr></table></figure><p>在你的 telegram 里打开 <a href="https://telegram.me/botfather"><code>BotFather</code></a> ， 输入命令 <code>/newbot</code> 来创建机器人</p><p>第一次输入的名字是 机器人的名字 ，随意命名，能记住就行 第二次是 telegram 认的名字 ， 后面要带 bot 创建好后，需要给你的机器人发送一条（任意）消息</p><p>然后复制你的 <code>API TOKEN</code></p><p>然后打开 <a href="https://t.me/userinfobot">UserIDBot</a> ，直接开始就可以看到你的 Chat ID ，手动复制ID后面的数字</p><p>打开 <code>fail2ban-telegram-notify.sh</code> 修改以下变量</p><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">TELEGRAM_TOKEN</span>=<span class="hljs-string">&quot;你的Telegram Bot Token&quot;</span><br><span class="hljs-attr">CHAT_ID</span>=<span class="hljs-string">&quot;你的Telegram Chat ID&quot;</span><br></code></pre></td></tr></table></figure><p>退出并保存</p><p>启用服务</p><figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">systemctl <span class="hljs-keyword">start</span> fail2ban-<span class="hljs-keyword">notify</span>.service<br>systemctl <span class="hljs-keyword">enable</span> fail2ban-<span class="hljs-keyword">notify</span>.service<br>systemctl staatus fail2ban-<span class="hljs-keyword">notify</span>.service  # 验证服务正常运行<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;大多数VPS开启SSH用于用户登陆操作系统，对于暴露在公网环境的Linux来说，公网环境 + 端口暴露 的情况下经常有大量的恶意爆破登陆&lt;/p&gt;
+&lt;p&gt;Fail2ban 是一款入侵防御软件，通过扫描常见的登陆日志文件，并向系统防火墙添加对异常ip的封禁，达到防止爆破的目的&lt;</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>手动获取独立VPS的SSL证书</title>
