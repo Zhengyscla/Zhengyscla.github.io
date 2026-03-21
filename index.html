@@ -230,6 +230,39 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/2026/03/21/chansshport/" target="_self">
+          手动修改 SSH 登录端口
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/03/21/chansshport/" target="_self">
+        <div>
+          Linux 的 SSH 默认监听端口是 22 ，但在公网有非常多的人扫描这个端口爆破 SSH 密码 建议将 SSH 端口设置成高高位数端口 1. 登录终端，建议使用 VNC 或 SSH 之外的连接方式登录终端2. 检查环境在终端下执行下面的命令查看当前监听的端口 1sudo ss -tlnp | grep ssh  不出意外的话应该会有类似的输出： 123~ » sudo ss -tlnp | g
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-03-21 14:02" pubdate>
+              2026-03-21
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/2026/02/11/fail2ban/" target="_self">
           使用 Fail2ban 保护你的 SSH （基础）
         </a>
@@ -490,7 +523,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2025/05/02/arcgrollama/" target="_self">
         <div>
-          Ollama官方不优化Intel Arc显卡
+          在Intel Arc独立显卡上安装运行Ollama 本文参考 Run Ollama with IPEX-LLM on Intel GPU 并简化   注意，Ollama 官方程序目前已支持使用 vulkan 在 Intel Arc 独立显卡上直接运行大模型 运行效率并不高  将以下参数写入系统变量以使用vulkan运行 1234OLLAMA_VULKAN参数设置为：1   使用Ollama可以帮助
         </div>
       </a>
 
@@ -556,47 +589,13 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2024/07/24/termuxhexo/" target="_self">
-          Tremux搭建hexo博客
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2024/07/24/termuxhexo/" target="_self">
-        <div>
-          建议使用真正的服务器去搭建网站，搭建这个项目建议使用电脑，最好是Linux  尽管如此，你还是想要在手机上体验创建博客呢？ 环境准备手机系统：Android 5+ 软件：Tremux 合适的网络环境  部分手机第一次打开软件会出现报错，建议进入软件设置，清除软件数据。如果问题仍旧，说明手机权限过于严格，软件无法写入&#x2F;data&#x2F;data目录，至此，你只能放弃去做这件事了。  软
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2024-07-24 14:03" pubdate>
-              2024-07-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/termux/">#termux</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
 
 
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
 
 
 
